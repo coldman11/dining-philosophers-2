@@ -8,6 +8,9 @@ public class Waiter {
     private Semaphore[] forks;
     private Semaphore[] knives;
     private ArrayList queue = new ArrayList();
+    private boolean[] forksStatus = {false, false, false, false, false};
+    private boolean[] knivesStatus = {false, false, false, false, false};
+
 
 
     public Waiter(int philosopherCount, int forkCount, int knifeCount) {
@@ -39,6 +42,8 @@ public class Waiter {
         if (!this.isQueueFull()) {
             this.forks[index].P();
             this.addToQueue(pIndex);
+            DiningPhilosophers.transactionData.add(new TransactionData("PickingFork",pIndex, index));
+            forksStatus[pIndex] = true;
         }
         return index;
     }
@@ -49,23 +54,37 @@ public class Waiter {
         if (!this.isQueueFull()) {
             this.knives[index].P();
             this.addToQueue(pIndex);
+            DiningPhilosophers.transactionData.add(new TransactionData("PickingKnife",pIndex, index));
+            knivesStatus[pIndex] = true;
         }
         return index;
     }
 
     public void putDownFork(int index, int pIndex) {
-        this.forks[index].V();
-        this.removeFromQueue(pIndex);
+        if(forksStatus[pIndex])
+        {
+            this.forks[index].V();
+            this.removeFromQueue(pIndex);
+            DiningPhilosophers.transactionData.add(new TransactionData("PuttingFork",pIndex, index));
+            forksStatus[pIndex] = false;
+        }
+
     }
 
     public void putDownKnife(int index, int pIndex) {
-        this.knives[index].V();
-        this.removeFromQueue(pIndex);
+        if(knivesStatus[pIndex])
+        {
+            this.knives[index].V();
+            this.removeFromQueue(pIndex);
+            DiningPhilosophers.transactionData.add(new TransactionData("PuttingKnife",pIndex, index));
+            knivesStatus[pIndex] = false;
+        }
+
     }
 
     public boolean isQueueFull() {
         if(this.queue.size() >= this.PHILOSOPHER_COUNT - 1) {
-            System.out.println("QUEUE: QUEUE FULL");
+//            System.out.println("QUEUE: QUEUE FULL");
             return true;
         } else {
             return false;
@@ -91,5 +110,8 @@ public class Waiter {
             this.queue.remove(this.queue.indexOf(pIndex));
         }
     }
+
+
+
 
 }

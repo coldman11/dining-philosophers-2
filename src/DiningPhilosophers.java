@@ -1,7 +1,10 @@
+import java.util.ArrayList;
+
 public class DiningPhilosophers {
     private final int PHILOSOPHER_COUNT;
     private final int FORK_COUNT;
     private final int KNIFE_COUNT;
+    public static ArrayList<TransactionData> transactionData = new ArrayList<>();
 
     Waiter waiter;
 
@@ -19,5 +22,17 @@ public class DiningPhilosophers {
             Thread philosopher = new Philosopher(i, this.waiter);
             philosopher.start();
         }
+    }
+
+    public int getPHILOSOPHER_COUNT() {
+        return PHILOSOPHER_COUNT;
+    }
+
+    public int getFORK_COUNT() {
+        return FORK_COUNT;
+    }
+
+    public int getKNIFE_COUNT() {
+        return KNIFE_COUNT;
     }
 }
